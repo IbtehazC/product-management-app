@@ -1,4 +1,4 @@
-import { Grid, makeStyles, Paper, Typography } from "@material-ui/core";
+import { Drawer, Grid, makeStyles, Paper, Typography } from "@material-ui/core";
 import React, { useState } from "react";
 import Navbar from "./Navbar";
 import Product from "./Product";
@@ -13,6 +13,7 @@ const useStyle = makeStyles((theme) => ({
     height: "64vh",
     width: "32vw",
     padding: "10px",
+    textAlign: "center",
   },
 }));
 
@@ -24,6 +25,7 @@ export default function Dashboard() {
       costPrice: 50.0,
       sellingPrice: 70.0,
       category: "shoe",
+      isPending: true,
     },
     {
       id: 2,
@@ -31,20 +33,23 @@ export default function Dashboard() {
       costPrice: 20.0,
       sellingPrice: 25.0,
       category: "bag",
+      isPending: true,
     },
     {
-      id: 2,
+      id: 3,
       name: "Bag-2",
       costPrice: 15.0,
       sellingPrice: 22.0,
       category: "bag",
+      isPending: true,
     },
     {
-      id: 3,
+      id: 4,
       name: "Shoe-2",
       costPrice: 29.0,
       sellingPrice: 39.0,
       category: "shoe",
+      isPending: true,
     },
   ];
 
@@ -54,17 +59,47 @@ export default function Dashboard() {
 
   const classes = useStyle();
 
+  const pendingProducts = products.filter(
+    (product) => product.isPending === true
+  );
+  const managedProducts = products.filter(
+    (product) => product.isPending !== true
+  );
+
   return (
     <>
       <Navbar />
       <div className={classes.appBarSpacer} />
       <div className={classes.content}>
+        <Drawer variant="permanent">
+          <Typography variant="h5">Drawer</Typography>
+        </Drawer>
         <Paper style={{ padding: "10px" }}>
+          <Typography>Pending Products</Typography>
+          {pendingProducts.length === 0 ? (
+            <Typography>There are no more products left pending</Typography>
+          ) : (
+            <Grid container spacing={3}>
+              {pendingProducts.map((pendingProduct) => (
+                <Grid xs={12} md={6} item key={pendingProduct.id}>
+                  <Product
+                    product={pendingProduct}
+                    totalCostPrice={totalCostPrice}
+                    setTotalCostPrice={setTotalCostPrice}
+                    totalSellingPrice={totalSellingPrice}
+                    setTotalSellingPrice={setTotalSellingPrice}
+                  />
+                </Grid>
+              ))}
+            </Grid>
+          )}
+
+          <Typography>Managed Products</Typography>
           <Grid container spacing={3}>
-            {products.map((product) => (
-              <Grid xs={12} md={3} item key={product.id}>
+            {managedProducts.map((managedProduct) => (
+              <Grid xs={12} md={6} item key={managedProduct.id}>
                 <Product
-                  product={product}
+                  product={managedProduct}
                   totalCostPrice={totalCostPrice}
                   setTotalCostPrice={setTotalCostPrice}
                   totalSellingPrice={totalSellingPrice}
@@ -76,15 +111,19 @@ export default function Dashboard() {
         </Paper>
         <Paper className={classes.totals}>
           <Typography variant="h5">Totals</Typography>
-          <Typography variant="body2">
+          <Typography>
             total cost price: ${totalCostPrice}
           </Typography>
-          <Typography variant="body2">
+          <Typography>
             total selling price: ${totalSellingPrice}
           </Typography>
-          <Typography variant="body2">
+          <Typography>
             profit: ${totalSellingPrice - totalCostPrice}
           </Typography>
+          <div>
+            <Typography>Products Pending: {pendingProducts.length}</Typography>
+            <Typography>Total products managed: {managedProducts.length}</Typography>
+          </div>
         </Paper>
       </div>
     </>

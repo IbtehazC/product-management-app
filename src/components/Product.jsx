@@ -5,7 +5,7 @@ import {
   CardContent,
   Typography,
 } from "@material-ui/core";
-import React from "react";
+import React, { useState } from "react";
 
 export default function Product({
   product,
@@ -14,6 +14,7 @@ export default function Product({
   totalSellingPrice,
   setTotalSellingPrice,
 }) {
+
   return (
     <Card variant="outlined">
       <CardContent>
@@ -30,14 +31,16 @@ export default function Product({
           {product.category}
         </Typography>
         <CardActions>
+          {product.isPending &&
           <Button
             onClick={() => {
               setTotalCostPrice(totalCostPrice + product.costPrice);
               setTotalSellingPrice(totalSellingPrice + product.sellingPrice);
+              product.isPending = false;
             }}
           >
             Manage
-          </Button>
+          </Button>}
         </CardActions>
       </CardContent>
     </Card>
